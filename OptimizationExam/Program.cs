@@ -10,11 +10,7 @@ namespace OptimizationExam
             Console.WriteLine(matrix.ToString());
             Console.WriteLine();
             Console.WriteLine();
-            var lu = matrix.LUDecompose();
-            Console.WriteLine(lu.U.ToString());
-            Console.WriteLine();
-            Console.WriteLine();
-            Console.WriteLine(lu.L.ToString());
+            Console.WriteLine(matrix.ToSparseRowFormat().ToString());
         }
     }
 }

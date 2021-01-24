@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 
 namespace OptimizationExam
@@ -68,6 +70,42 @@ namespace OptimizationExam
             }
 
             return new LUDecomposition(new Matrix(l), new Matrix(u));
+        }
+
+        public CompressedSparseMatrix ToSparseRowFormat()
+        {
+            return ToSparseFormat(CompressType.Row);
+        }
+
+        public CompressedSparseMatrix ToSparseColumnFormat()
+        {
+            return ToSparseFormat(CompressType.Column);
+        }
+
+        private CompressedSparseMatrix ToSparseFormat(CompressType type)
+        {
+            Func<int, int, double> matrixItemGetter = type is CompressType.Row ? (i, j) => _matrix[i, j] : (i, j) => _matrix[j, i];
+            List<Double> items = new List<Double>();
+            List<int> positions = new List<Int32>();
+            List<int> ind = new List<Int32> { 1 };
+            int counter = 0;
+
+            for (int i = 0; i < MatrixLength; i++)
+            {
+                for (int j = 0; j < MatrixLength; j++)
+                {
+                    var value = matrixItemGetter.Invoke(i, j);
+                    if (value == 0)
+                        continue;
+
+                    counter++;
+                    items.Add(value);
+                    positions.Add(j);
+                }
+                ind.Add(counter);
+            }
+
+            return new CompressedSparseMatrix(items, positions, ind, MatrixLength, type);
         }
 
         public override String ToString()

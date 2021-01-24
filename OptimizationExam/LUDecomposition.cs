@@ -12,10 +12,5 @@ namespace OptimizationExam
             L = l;
             U = u;
         }
-
-        public Matrix GetInverseMatrix()
-        {
-            throw new NotImplementedException();
-        }
     }
 }
