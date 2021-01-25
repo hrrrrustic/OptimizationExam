@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Reflection.Metadata.Ecma335;
 using System.Text;
 
 namespace OptimizationExam
@@ -10,8 +8,9 @@ namespace OptimizationExam
     {
         private static readonly Random Random = new Random();
         private readonly Double[,] _matrix;
+        public int MatrixColumnLength => _matrix.GetLength(0);
+        public int MatrixRowLength => _matrix.GetLength(1);
 
-        private int MatrixLength => _matrix.GetLength(0);
         public Matrix(Double[,] matrix)
         {
             _matrix = matrix;
@@ -51,21 +50,21 @@ namespace OptimizationExam
 
         public LUDecomposition LUDecompose()
         {
-            Double[,] l = new Double[MatrixLength, MatrixLength];
+            Double[,] l = new Double[MatrixRowLength, MatrixRowLength];
             Double[,] u = _matrix.GetCopy();
 
-            for (int i = 0; i < MatrixLength; i++)
-                for (int j = i; j < MatrixLength; j++)
+            for (int i = 0; i < MatrixRowLength; i++)
+                for (int j = i; j < MatrixRowLength; j++)
                     l[j, i] = _matrix[j, i] / _matrix[i, i];
 
-            for (int i = 1; i < MatrixLength; i++)
+            for (int i = 1; i < MatrixRowLength; i++)
             {
-                for (int j = i - 1; j < MatrixLength; j++)
-                    for (int k = j; k < MatrixLength; k++)
+                for (int j = i - 1; j < MatrixRowLength; j++)
+                    for (int k = j; k < MatrixRowLength; k++)
                         l[k, j] = u[k, j] / u[j, j];
 
-                for (int j = i; j < MatrixLength; j++)
-                    for (int k = i - 1; k < MatrixLength; k++)
+                for (int j = i; j < MatrixRowLength; j++)
+                    for (int k = i - 1; k < MatrixRowLength; k++)
                         u[j, k] = u[j, k] - l[j, i - 1] * u[i - 1, k];
             }
 
@@ -90,9 +89,9 @@ namespace OptimizationExam
             List<int> ind = new List<Int32> { 1 };
             int counter = 0;
 
-            for (int i = 0; i < MatrixLength; i++)
+            for (int i = 0; i < MatrixRowLength; i++)
             {
-                for (int j = 0; j < MatrixLength; j++)
+                for (int j = 0; j < MatrixRowLength; j++)
                 {
                     var value = matrixItemGetter.Invoke(i, j);
                     if (value == 0)
@@ -105,15 +104,15 @@ namespace OptimizationExam
                 ind.Add(counter);
             }
 
-            return new CompressedSparseMatrix(items, positions, ind, MatrixLength, type);
+            return new CompressedSparseMatrix(items, positions, ind, MatrixRowLength, type);
         }
 
         public override String ToString()
         {
             var stringBuilder = new StringBuilder(_matrix.Length);
-            for (int i = 0; i < MatrixLength; i++)
+            for (int i = 0; i < MatrixColumnLength; i++)
             {
-                for (int j = 0; j < MatrixLength ; j++)
+                for (int j = 0; j < MatrixRowLength ; j++)
                     stringBuilder.Append(_matrix[i, j]).Append(' ');
 
                 stringBuilder.AppendLine();
