@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Xml;
 
 namespace OptimizationExam
 {
@@ -105,6 +107,29 @@ namespace OptimizationExam
             }
 
             return new CompressedSparseMatrix(items, positions, ind, MatrixRowLength, type);
+        }
+
+        public static Matrix GetIdentityColumn(int length, int item)
+        {
+            Double[,] column = new Double[length, 1];
+            column[item, 0] = 1;
+
+            return new Matrix(column);
+        }
+
+        public Matrix GetInverseMatrix()
+        {
+            double[,] inverse = new Double[MatrixColumnLength, MatrixRowLength];
+
+            for (int i = 0; i < MatrixRowLength; i++)
+            {
+                var identityColumn = GetIdentityColumn(MatrixRowLength, i);
+                var res = MatrixEquationSolver.SolveAxEqualsB(this, identityColumn);
+                for (int j = 0; j < MatrixRowLength; j++)
+                    inverse[j, i] = res[j, 0];
+            }
+
+            return new Matrix(inverse);
         }
 
         public override String ToString()
